@@ -28,16 +28,17 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ecommerce-app .
+          IMAGE_TAG=${{ github.sha }}
+          docker build -t ecommerce-app:$IMAGE_TAG .
 
       - name: Tag Docker image
         run: |
-          docker tag ecommerce-app:latest \
-            335877214259.dkr.ecr.ap-south-1.amazonaws.com/ecommerce-app:latest
+          docker tag ecommerce-app:$IMAGE_TAG \
+            335877214259.dkr.ecr.ap-south-1.amazonaws.com/ecommerce-app:$IMAGE_TAG
 
       - name: Push Docker image to ECR
         run: |
-          docker push 335877214259.dkr.ecr.ap-south-1.amazonaws.com/ecommerce-app:latest
+          docker push 335877214259.dkr.ecr.ap-south-1.amazonaws.com/ecommerce-app:$IMAGE_TAG
 
       - name: Force ECS service redeploy
         run: |
