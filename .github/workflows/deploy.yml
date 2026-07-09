@@ -44,4 +44,5 @@ jobs:
           aws ecs update-service \
             --cluster ecommerce-cluster \
             --service ecommerce-service \
+            --task-definition ecommerce-task:latest \
             --force-new-deployment

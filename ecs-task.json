@@ -1,0 +1,7 @@
+- name: Render new task definition
+  run: |
+    sed -e "s|http://ecommerce-alb-951080605.ap-south-1.elb.amazonaws.com/|335877214259.dkr.ecr.ap-south-1.amazonaws.com/ecommerce-app:latest|" ecs-task.json > ecs-task-new.json
+
+- name: Register new task definition
+  run: |
+    aws ecs register-task-definition --cli-input-json file://ecs-task-new.json
