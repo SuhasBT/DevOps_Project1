@@ -1,0 +1,1 @@
+app_image = "335877214259.dkr.ecr.ap-south-1.amazonaws.com/ecommerce-app:latest"
