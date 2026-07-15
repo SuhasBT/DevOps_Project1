@@ -8,7 +8,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -23,8 +22,8 @@ jobs:
       - name: Login to Amazon ECR
         run: |
           aws ecr get-login-password --region ap-south-1 \
-            | docker login --username AWS \
-            --password-stdin 335877214259.dkr.ecr.ap-south-1.amazonaws.com
+          | docker login --username AWS \
+          --password-stdin 335877214259.dkr.ecr.ap-south-1.amazonaws.com
 
       - name: Build Docker image
         run: |
@@ -33,17 +32,29 @@ jobs:
 
       - name: Tag Docker image
         run: |
+          IMAGE_TAG=${{ github.sha }}
           docker tag ecommerce-app:$IMAGE_TAG \
-            335877214259.dkr.ecr.ap-south-1.amazonaws.com/ecommerce-app:$IMAGE_TAG
+          335877214259.dkr.ecr.ap-south-1.amazonaws.com/ecommerce-app:$IMAGE_TAG
 
       - name: Push Docker image to ECR
         run: |
+          IMAGE_TAG=${{ github.sha }}
           docker push 335877214259.dkr.ecr.ap-south-1.amazonaws.com/ecommerce-app:$IMAGE_TAG
+
+      - name: Render new task definition
+        run: |
+          IMAGE_TAG=${{ github.sha }}
+          sed -e "s|PLACEHOLDER_IMAGE|335877214259.dkr.ecr.ap-south-1.amazonaws.com/ecommerce-app:$IMAGE_TAG|" ecs-task.json > ecs-task-new.json
+
+      - name: Register new task definition
+        run: |
+          aws ecs register-task-definition --cli-input-json file://ecs-task-new.json
 
       - name: Force ECS service redeploy
         run: |
           aws ecs update-service \
             --cluster ecommerce-cluster \
             --service ecommerce-service \
-            --task-definition ecommerce-task:latest \
             --force-new-deployment
+
+    
