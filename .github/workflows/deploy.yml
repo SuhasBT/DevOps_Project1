@@ -29,6 +29,10 @@ jobs:
         run: |
           IMAGE_TAG=${{ github.sha }}
           docker build -t ecommerce-app:$IMAGE_TAG .
+          docker tag ecommerce-app:$IMAGE_TAG \
+          335877214259.dkr.ecr.ap-south-1.amazonaws.com/ecommerce-app:$IMAGE_TAG        
+          docker push 335877214259.dkr.ecr.ap-south-1.amazonaws.com/ecommerce-app:$IMAGE_TAG    
+          
 
       - name: Tag Docker image
         run: |
